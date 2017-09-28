@@ -60,3 +60,51 @@ def initdb_command():
     # initializes database
     init_db()
     print('Initialized the database.')
+
+# VIEWS
+# Shows all entries stored in database.
+@app.route('/')
+def show_entries():
+    db = get_db()
+    cur = db.execute('select title, text from entries order by id desc')
+    entries = cur.fetchall()
+    return render_template('show_entries.html', entries=entries)
+
+# Add new entry if user is logged in
+@app.route('/add', methods=['POST'])
+def add_entry():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    # using question marks in db.execute prevents vulnerability to SQL injection
+    # sorry little bobby tables
+    db.execute('insert into entries (title, text) values (?, ?)',
+                    [request.form['title'], request.form['text']])
+    db.commit()
+    flash('New entry was successfully posted')
+    return redirect(url_for('show_entries'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # checks username and password against ones from configuration
+    # sets logged_in key for session (True if successful)
+    error = None
+    # NOTE: in production system passwords need to be hashed + salted (mmm) before being stored
+    # in DB or file
+    # Flask extensions exist to make this easier: http://flask.pocoo.org/extensions/
+
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME']:
+            error = 'Invalid username'
+        elif request.form['password'] != app.config['PASSWORD']:
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            flash('You were logged in')
+            return redirect(url_for('show_entries'))
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    # pop session if logged in otherwise do nothing (default)
+    session.pop('logged_in', None)
