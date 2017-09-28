@@ -1,0 +1,9 @@
+MANIFEST.in
+flaskcrud/__init__.py
+flaskcrud/flaskcrud.py
+flaskcrud/schema.sql
+flaskcrud.egg-info/PKG-INFO
+flaskcrud.egg-info/SOURCES.txt
+flaskcrud.egg-info/dependency_links.txt
+flaskcrud.egg-info/requires.txt
+flaskcrud.egg-info/top_level.txt

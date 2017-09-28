@@ -1,0 +1,3 @@
+graft flaskcrud/templates
+graft flaskcrud/static
+include flaskcrud/schema.sql
