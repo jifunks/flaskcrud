@@ -108,3 +108,5 @@ def login():
 def logout():
     # pop session if logged in otherwise do nothing (default)
     session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('show_entries'))
